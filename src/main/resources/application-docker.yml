@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://pulse-postgres:5432/pulse
+    username: pulse
+    password: pulse_dev_password
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      host: pulse-redis
+      port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.springframework.security: DEBUG
