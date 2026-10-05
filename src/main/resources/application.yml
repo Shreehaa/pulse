@@ -3,9 +3,9 @@ spring:
     name: pulse
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/pulse
-    username: pulse
-    password: pulse_dev_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/pulse}
+    username: ${SPRING_DATASOURCE_USERNAME:pulse}
+    password: ${SPRING_DATASOURCE_PASSWORD:pulse}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -15,8 +15,18 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
+pulse:
+  job-results-dir: data/job-results
+
+  security:
+    jwt-secret: ${PULSE_SECURITY_JWT_SECRET:test-secret-for-pulse-development-12345678901234567890}
+
+  app:
+    username: ${PULSE_APP_USERNAME:user}
+    password: ${PULSE_APP_PASSWORD:pulse123}
 
 server:
   port: 8080
@@ -27,6 +37,10 @@ management:
       exposure:
         include: health,info
 
+  endpoint:
+    health:
+      show-details: never
+
 logging:
   level:
-    org.springframework.security: TRACE
+    org.springframework.security: INFO

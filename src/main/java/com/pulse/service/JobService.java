@@ -20,16 +20,18 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobEventPublisher jobEventPublisher;
     private final IdempotencyRecordRepository idempotencyRecordRepository;
+    private final JobStatusHistoryService jobStatusHistoryService;
 
     public JobService(
             JobRepository jobRepository,
             JobEventPublisher jobEventPublisher,
-            IdempotencyRecordRepository idempotencyRecordRepository) {
+            IdempotencyRecordRepository idempotencyRecordRepository,
+            JobStatusHistoryService jobStatusHistoryService) {
 
         this.jobRepository = jobRepository;
         this.jobEventPublisher = jobEventPublisher;
-        this.idempotencyRecordRepository =
-                idempotencyRecordRepository;
+        this.idempotencyRecordRepository = idempotencyRecordRepository;
+        this.jobStatusHistoryService = jobStatusHistoryService;
     }
 
     public Job createJob(
@@ -79,6 +81,11 @@ public class JobService {
         Job savedJob =
                 jobRepository.save(job);
 
+        jobStatusHistoryService.record(
+                savedJob,
+                JobStatus.PENDING
+        );
+
         IdempotencyRecord idempotencyRecord =
                 new IdempotencyRecord(
                         idempotencyKey,
@@ -101,10 +108,17 @@ public class JobService {
         return jobRepository.findAll();
     }
 
+    public Job getJobById(Long id) {
+        return jobRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Job not found: " + id
+                        )
+                );
+    }
+
     private String createFingerprint(String value) {
-
         try {
-
             MessageDigest digest =
                     MessageDigest.getInstance("SHA-256");
 
@@ -117,7 +131,6 @@ public class JobService {
                     new StringBuilder();
 
             for (byte b : hash) {
-
                 String hex =
                         Integer.toHexString(
                                 0xff & b

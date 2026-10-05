@@ -2,8 +2,12 @@ package com.pulse.service;
 
 import com.pulse.config.RedisStreamConfig;
 import com.pulse.entity.Job;
+import com.pulse.entity.JobAttempt;
+import com.pulse.entity.JobAttemptStatus;
 import com.pulse.entity.JobStatus;
+import com.pulse.repository.JobAttemptRepository;
 import com.pulse.repository.JobRepository;
+import io.micrometer.core.instrument.Timer;
 import jakarta.annotation.PostConstruct;
 import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -12,8 +16,10 @@ import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Service;
+import java.nio.file.Path;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 @Service
@@ -21,13 +27,25 @@ public class JobWorker {
 
     private final StringRedisTemplate redisTemplate;
     private final JobRepository jobRepository;
+    private final JobAttemptRepository jobAttemptRepository;
+    private final PulseMetricsService pulseMetricsService;
+    private final JobStatusHistoryService jobStatusHistoryService;
+    private final JobExecutor jobExecutor;
 
     public JobWorker(
             StringRedisTemplate redisTemplate,
-            JobRepository jobRepository) {
+            JobRepository jobRepository,
+            JobAttemptRepository jobAttemptRepository,
+            PulseMetricsService pulseMetricsService,
+            JobStatusHistoryService jobStatusHistoryService,
+            JobExecutor jobExecutor) {
 
         this.redisTemplate = redisTemplate;
         this.jobRepository = jobRepository;
+        this.jobAttemptRepository = jobAttemptRepository;
+        this.pulseMetricsService = pulseMetricsService;
+        this.jobStatusHistoryService = jobStatusHistoryService;
+        this.jobExecutor = jobExecutor;
     }
 
     @PostConstruct
@@ -80,9 +98,7 @@ public class JobWorker {
 
         container.start();
 
-        System.out.println(
-                "Pulse worker started."
-        );
+        System.out.println("Pulse worker started.");
     }
 
     public void processRecoveredMessage(
@@ -111,9 +127,7 @@ public class JobWorker {
 
         try {
 
-            jobId = Long.valueOf(
-                    jobIdValue
-            );
+            jobId = Long.valueOf(jobIdValue);
 
         } catch (NumberFormatException e) {
 
@@ -143,9 +157,8 @@ public class JobWorker {
         /*
          * If the job has already reached the maximum
          * number of attempts, move it to the DLQ
-         * and acknowledge the original Redis message.
+         * and acknowledge the Redis message.
          */
-
         if (job.getAttemptCount()
                 >= RedisStreamConfig.MAX_ATTEMPTS) {
 
@@ -159,19 +172,52 @@ public class JobWorker {
             return;
         }
 
+        JobAttempt attempt = null;
+
+        /*
+         * Timer is declared outside the try block so
+         * both success and failure paths can record it.
+         */
+        Timer.Sample processingTimer = null;
+
         try {
 
+            // Increment attempt counter
             job.incrementAttemptCount();
 
+            // Move job into PROCESSING state
             job.setStatus(
                     JobStatus.PROCESSING
             );
 
             job.setUpdatedAt(
-                    java.time.Instant.now()
+                    Instant.now()
             );
 
             jobRepository.save(job);
+
+            // Record PROCESSING status history
+            jobStatusHistoryService.record(
+                    job,
+                    JobStatus.PROCESSING
+            );
+
+            // Create persistent attempt history
+            attempt = new JobAttempt(
+                    job,
+                    job.getAttemptCount(),
+                    JobAttemptStatus.RUNNING,
+                    Instant.now()
+            );
+
+            jobAttemptRepository.save(attempt);
+
+            // Record attempt metric
+            pulseMetricsService.jobAttempted();
+
+            // Start processing timer
+            processingTimer =
+                    pulseMetricsService.startProcessingTimer();
 
             System.out.println(
                     "Job " + jobId +
@@ -179,23 +225,55 @@ public class JobWorker {
                             job.getAttemptCount()
             );
 
-            processJob(jobId);
+            // Process the job
+            Path resultPath = processJob(job);
+            if (resultPath != null) {
+                job.setResultPath(resultPath.toString());
+            }
 
+            // Job completed successfully
             job.setStatus(
                     JobStatus.COMPLETED
             );
 
             job.setUpdatedAt(
-                    java.time.Instant.now()
+                    Instant.now()
             );
 
             jobRepository.save(job);
+
+            // Record COMPLETED status history
+            jobStatusHistoryService.record(
+                    job,
+                    JobStatus.COMPLETED
+            );
+
+            // Mark attempt as completed
+            attempt.setStatus(
+                    JobAttemptStatus.COMPLETED
+            );
+
+            attempt.setCompletedAt(
+                    Instant.now()
+            );
+
+            jobAttemptRepository.save(attempt);
+
+            // Record successful job metrics
+            pulseMetricsService.jobCompleted();
+
+            if (processingTimer != null) {
+                pulseMetricsService.recordProcessingTime(
+                        processingTimer
+                );
+            }
 
             System.out.println(
                     "Job " + jobId +
                             " is now COMPLETED."
             );
 
+            // Acknowledge Redis message
             redisTemplate.opsForStream().acknowledge(
                     stream,
                     group,
@@ -209,15 +287,49 @@ public class JobWorker {
 
         } catch (Exception e) {
 
+            // Mark job as FAILED
             job.setStatus(
                     JobStatus.FAILED
             );
 
             job.setUpdatedAt(
-                    java.time.Instant.now()
+                    Instant.now()
             );
 
             jobRepository.save(job);
+
+            // Record FAILED status history
+            jobStatusHistoryService.record(
+                    job,
+                    JobStatus.FAILED
+            );
+
+            // Mark current attempt as failed
+            if (attempt != null) {
+
+                attempt.setStatus(
+                        JobAttemptStatus.FAILED
+                );
+
+                attempt.setCompletedAt(
+                        Instant.now()
+                );
+
+                attempt.setErrorMessage(
+                        e.getMessage()
+                );
+
+                jobAttemptRepository.save(attempt);
+            }
+
+            // Record failed job metrics
+            pulseMetricsService.jobFailed();
+
+            if (processingTimer != null) {
+                pulseMetricsService.recordProcessingTime(
+                        processingTimer
+                );
+            }
 
             System.out.println(
                     "Job " + jobId +
@@ -227,6 +339,10 @@ public class JobWorker {
                             e.getMessage()
             );
 
+            /*
+             * Do not acknowledge the Redis message while
+             * another retry is available.
+             */
             if (job.getAttemptCount()
                     < RedisStreamConfig.MAX_ATTEMPTS) {
 
@@ -279,24 +395,41 @@ public class JobWorker {
         );
     }
 
-    private void processJob(Long jobId) {
+    private Path processJob(Job job) {
 
         System.out.println(
-                "Processing job " + jobId
+                "Processing job " +
+                        job.getId() +
+                        " — NAME = [" +
+                        job.getName() +
+                        "]"
         );
 
-        try {
+        /*
+         * Controlled failure mode used only for
+         * retry/DLQ testing.
+         */
+        if (job.getName().contains("FAIL_RETRY")) {
 
-            Thread.sleep(1000);
-
-        } catch (InterruptedException e) {
-
-            Thread.currentThread().interrupt();
+            System.out.println(
+                    "FAIL_RETRY MATCHED — THROWING EXCEPTION"
+            );
 
             throw new IllegalStateException(
-                    "Job processing interrupted",
-                    e
+                    "Simulated processing failure for retry testing"
             );
         }
+
+        /*
+         * Real job execution.
+         */
+        Path resultPath = jobExecutor.execute(job);
+
+        System.out.println(
+                "Job " + job.getId() +
+                        " processing completed successfully."
+        );
+
+        return resultPath;
     }
 }

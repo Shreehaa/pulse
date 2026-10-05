@@ -1,14 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://pulse-postgres:5432/pulse
-    username: pulse
-    password: pulse_dev_password
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   data:
     redis:
-      host: pulse-redis
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
 
   jpa:
     hibernate:
@@ -22,7 +22,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,prometheus
+
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   level:

@@ -38,3 +38,10 @@ Thumbs.db
 
 # Spring Boot
 spring.log
+
+# Local test/debug artifacts
+backups/
+body.json
+job.json
+job-idempotency.json
+test-job.json

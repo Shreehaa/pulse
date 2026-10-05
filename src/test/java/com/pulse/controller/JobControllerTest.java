@@ -2,7 +2,9 @@ package com.pulse.controller;
 
 import com.pulse.entity.Job;
 import com.pulse.entity.JobStatus;
+import com.pulse.service.DeadLetterQueueService;
 import com.pulse.service.JobService;
+import com.pulse.service.JobStatusHistoryService;
 import com.pulse.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,13 @@ class JobControllerTest {
     private JobService jobService;
 
     @MockitoBean
+    private JobStatusHistoryService jobStatusHistoryService;
+
+    @MockitoBean
     private JwtService jwtService;
+
+    @MockitoBean
+    private DeadLetterQueueService deadLetterQueueService;
 
     @Test
     void shouldCreateJob() throws Exception {
@@ -74,4 +82,3 @@ class JobControllerTest {
                 );
     }
 }
-

@@ -30,6 +30,9 @@ class JobServiceTest {
     @Mock
     private IdempotencyRecordRepository idempotencyRecordRepository;
 
+    @Mock
+    private JobStatusHistoryService jobStatusHistoryService;
+
     @InjectMocks
     private JobService jobService;
 
@@ -62,8 +65,19 @@ class JobServiceTest {
                 result.getName()
         );
 
+        assertEquals(
+                JobStatus.PENDING,
+                result.getStatus()
+        );
+
         verify(jobRepository)
                 .save(any(Job.class));
+
+        verify(jobStatusHistoryService)
+                .record(
+                        savedJob,
+                        JobStatus.PENDING
+                );
 
         verify(idempotencyRecordRepository)
                 .save(any(IdempotencyRecord.class));
@@ -107,6 +121,15 @@ class JobServiceTest {
         verify(jobRepository, never())
                 .save(any(Job.class));
 
+        verify(jobStatusHistoryService, never())
+                .record(
+                        any(Job.class),
+                        any(JobStatus.class)
+                );
+
+        verify(idempotencyRecordRepository, never())
+                .save(any(IdempotencyRecord.class));
+
         verify(jobEventPublisher, never())
                 .publishJobCreated(any(Job.class));
     }
@@ -148,8 +171,19 @@ class JobServiceTest {
                 result.getName()
         );
 
+        assertEquals(
+                JobStatus.PENDING,
+                result.getStatus()
+        );
+
         verify(jobRepository, never())
                 .save(any(Job.class));
+
+        verify(jobStatusHistoryService, never())
+                .record(
+                        any(Job.class),
+                        any(JobStatus.class)
+                );
 
         verify(idempotencyRecordRepository, never())
                 .save(any(IdempotencyRecord.class));
@@ -205,4 +239,3 @@ class JobServiceTest {
                 .findAll();
     }
 }
-

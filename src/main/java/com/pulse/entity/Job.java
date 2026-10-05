@@ -1,7 +1,11 @@
 package com.pulse.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "jobs")
@@ -26,6 +30,18 @@ public class Job {
 
     @Column(nullable = false)
     private int attemptCount;
+
+    @Column(length = 1000)
+    private String resultPath;
+
+    @OneToMany(
+            mappedBy = "job",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OrderBy("attemptNumber ASC")
+    @JsonIgnore
+    private List<JobAttempt> attempts = new ArrayList<>();
 
     public Job() {
     }
@@ -74,7 +90,24 @@ public class Job {
         return attemptCount;
     }
 
+    public String getResultPath() {
+        return resultPath;
+    }
+
+    public void setResultPath(String resultPath) {
+        this.resultPath = resultPath;
+    }
+
     public void incrementAttemptCount() {
         this.attemptCount++;
     }
+
+    public List<JobAttempt> getAttempts() {
+        return attempts;
+    }
+
+    public void addAttempt(JobAttempt attempt) {
+        attempts.add(attempt);
+    }
 }
+

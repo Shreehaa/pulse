@@ -1,0 +1,792 @@
+/* =========================================================
+   Pulse — Failed Jobs
+   ========================================================= */
+
+/* =========================================================
+   Page Header
+   ========================================================= */
+
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 28px;
+
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 5px 0 7px;
+
+    color: #0f172a;
+
+    font-size: clamp(30px, 3vw, 36px);
+    font-weight: 750;
+
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+}
+
+.page-description {
+    max-width: 680px;
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   Header Button
+   ========================================================= */
+
+.page-header .secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #334155;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+            background-color 160ms ease,
+            border-color 160ms ease,
+            color 160ms ease,
+            box-shadow 160ms ease,
+            transform 160ms ease;
+}
+
+.page-header .secondary-button:hover:not(:disabled) {
+    border-color: #cbd5e1;
+
+    background: #f8fafc;
+    color: #0f172a;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+            0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.page-header .secondary-button:focus-visible {
+    outline: 2px solid #6475e8;
+    outline-offset: 2px;
+}
+
+.page-header .secondary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* =========================================================
+   Stats
+   ========================================================= */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    position: relative;
+
+    min-width: 0;
+
+    padding: 20px;
+
+    overflow: hidden;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow:
+            0 6px 20px rgba(15, 23, 42, 0.04);
+
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease,
+            transform 160ms ease;
+}
+
+.stat-card::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 90px;
+    height: 90px;
+
+    content: "";
+
+    pointer-events: none;
+
+    background:
+            radial-gradient(
+                    circle,
+                    rgba(220, 38, 38, 0.06),
+                    transparent 68%
+            );
+}
+
+.stat-card:hover {
+    border-color: #d8dee8;
+
+    box-shadow:
+            0 10px 26px rgba(15, 23, 42, 0.065);
+
+    transform: translateY(-2px);
+}
+
+.stat-card-header {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 13px;
+}
+
+.stat-card-header span {
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.stat-card-header svg {
+    flex-shrink: 0;
+
+    color: #dc2626;
+}
+
+.stat-card > strong {
+    position: relative;
+    z-index: 1;
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #0f172a;
+
+    font-size: 28px;
+    font-weight: 750;
+
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-card > small {
+    position: relative;
+    z-index: 1;
+
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   Failed Jobs Card
+   ========================================================= */
+
+.jobs-card {
+    overflow: hidden;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+            0 8px 28px rgba(15, 23, 42, 0.045);
+}
+
+.jobs-card-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    padding: 22px;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.jobs-card-header > div:first-child {
+    min-width: 0;
+}
+
+.jobs-card-header h2 {
+    margin: 0 0 4px;
+
+    color: #0f172a;
+
+    font-size: 17px;
+    font-weight: 750;
+
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+.jobs-card-header p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   Search
+   ========================================================= */
+
+.jobs-card-header .jobs-search {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: min(320px, 100%);
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
+}
+
+.jobs-card-header .jobs-search:focus-within {
+    border-color: #94a3b8;
+
+    box-shadow:
+            0 0 0 3px rgba(100, 116, 139, 0.08);
+}
+
+.jobs-card-header .jobs-search > svg {
+    flex-shrink: 0;
+
+    margin-left: 12px;
+
+    color: #94a3b8;
+}
+
+.jobs-card-header .jobs-search input {
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+
+    padding: 0 12px 0 9px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+    color: #0f172a;
+
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.jobs-card-header .jobs-search input::placeholder {
+    color: #a1acba;
+}
+
+/* =========================================================
+   Table
+   ========================================================= */
+
+.table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.jobs-table {
+    width: 100%;
+
+    min-width: 720px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+.jobs-table thead {
+    background: #f8fafc;
+}
+
+.jobs-table th {
+    height: 42px;
+
+    padding: 0 18px;
+
+    border-bottom: 1px solid #e5eaf0;
+
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: 0.055em;
+    text-align: left;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.jobs-table th:nth-child(1) {
+    width: 82px;
+}
+
+.jobs-table th:nth-child(2) {
+    width: 35%;
+}
+
+.jobs-table th:nth-child(3) {
+    width: 17%;
+}
+
+.jobs-table th:nth-child(4) {
+    width: 13%;
+}
+
+.jobs-table th:nth-child(5) {
+    width: 25%;
+}
+
+.jobs-table td {
+    height: 67px;
+
+    padding: 10px 18px;
+
+    border-bottom: 1px solid #eef1f5;
+
+    vertical-align: middle;
+
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+.jobs-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.jobs-table tbody tr {
+    background: #ffffff;
+
+    transition:
+            background-color 140ms ease;
+}
+
+.jobs-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+.jobs-table tbody tr:focus-visible {
+    outline: 2px solid #6475e8;
+    outline-offset: -2px;
+
+    background: #f8fafc;
+}
+
+/* =========================================================
+   Job ID
+   ========================================================= */
+
+.job-id {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 27px;
+
+    padding: 0 8px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+
+    background: #f8fafc;
+    color: #64748b;
+
+    font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            "Liberation Mono",
+            monospace;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Job Name
+   ========================================================= */
+
+.job-name-cell {
+    min-width: 0;
+}
+
+.job-name-cell strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: #1e293b;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.job-name-cell span {
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   Failed Status
+   ========================================================= */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 0 9px;
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: 0.025em;
+
+    white-space: nowrap;
+}
+
+.status-failed {
+    border-color: #fecaca;
+
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* =========================================================
+   Attempt Count
+   ========================================================= */
+
+.attempt-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 28px;
+
+    padding: 0 7px;
+
+    border-radius: 7px;
+
+    background: #f1f5f9;
+    color: #475569;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    min-height: 310px;
+
+    padding: 45px 24px;
+
+    text-align: center;
+}
+
+.empty-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 54px;
+    height: 54px;
+
+    margin-bottom: 16px;
+
+    border: 1px solid #bbf7d0;
+    border-radius: 15px;
+
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.empty-state h3 {
+    margin: 0 0 7px;
+
+    color: #0f172a;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.empty-state p {
+    max-width: 430px;
+
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   Error
+   ========================================================= */
+
+.error-state {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 20px;
+    padding: 15px 17px;
+
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.error-state > div {
+    min-width: 0;
+    flex: 1;
+}
+
+.error-state strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #991b1b;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.error-state p {
+    margin: 0;
+
+    color: #b91c1c;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.error-state button {
+    min-height: 32px;
+
+    padding: 0 11px;
+
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #b91c1c;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.error-state button:hover {
+    background: #fff7f7;
+}
+
+/* =========================================================
+   Loading
+   ========================================================= */
+
+.skeleton-card {
+    height: 112px;
+
+    border-radius: 14px;
+}
+
+.skeleton-table {
+    height: 390px;
+
+    border-radius: 0;
+}
+
+@media (max-width: 700px) {
+    .skeleton-card {
+        height: 105px;
+    }
+}
+
+/* =========================================================
+   Responsive — Tablet
+   ========================================================= */
+
+@media (max-width: 850px) {
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 18px;
+    }
+
+    .page-header .secondary-button {
+        align-self: flex-start;
+    }
+
+    .jobs-card-header {
+        align-items: stretch;
+        flex-direction: column;
+
+        gap: 16px;
+    }
+
+    .jobs-card-header .jobs-search {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   Responsive — Mobile
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .page-header h1 {
+        font-size: 29px;
+    }
+
+    .page-description {
+        font-size: 12px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 17px;
+    }
+
+    .jobs-card-header {
+        padding: 18px;
+    }
+
+    .jobs-table th,
+    .jobs-table td {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
+/* =========================================================
+   Reduced Motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .page-header .secondary-button,
+    .stat-card,
+    .jobs-card-header .jobs-search,
+    .jobs-table tbody tr {
+        transition: none;
+    }
+
+    .spin-animation {
+        animation: none;
+    }
+}

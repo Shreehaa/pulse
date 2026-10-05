@@ -1,0 +1,643 @@
+/* =========================================================
+   PULSE THEME VARIABLES
+   ========================================================= */
+
+:root {
+    color-scheme: light;
+
+    --pulse-bg: #f6f8fb;
+    --pulse-surface: #ffffff;
+    --pulse-surface-alt: #f8fafc;
+
+    --pulse-text: #1f2b40;
+    --pulse-text-strong: #263147;
+    --pulse-muted: #8994a7;
+    --pulse-muted-light: #8b96a8;
+
+    --pulse-border: #e3e8f0;
+    --pulse-border-light: #edf1f5;
+    --pulse-border-soft: #f0f3f7;
+
+    --pulse-primary: #5967d9;
+    --pulse-primary-soft: #eef0ff;
+    --pulse-primary-bg: #f1f3ff;
+
+    --pulse-success: #267346;
+    --pulse-success-bg: #f3fbf6;
+    --pulse-success-border: #ccebd8;
+
+    --pulse-danger: #b23a47;
+    --pulse-danger-dot: #dc2626;
+
+    --pulse-shadow:
+            0 8px 24px rgba(15, 23, 42, 0.04);
+
+    --pulse-shadow-hover:
+            0 12px 28px rgba(15, 23, 42, 0.065);
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --pulse-bg: #0f172a;
+    --pulse-surface: #111827;
+    --pulse-surface-alt: #1e293b;
+
+    --pulse-text: #f8fafc;
+    --pulse-text-strong: #f1f5f9;
+    --pulse-muted: #94a3b8;
+    --pulse-muted-light: #a8b3c4;
+
+    --pulse-border: #334155;
+    --pulse-border-light: #263449;
+    --pulse-border-soft: #253247;
+
+    --pulse-primary: #818cf8;
+    --pulse-primary-soft: #252b55;
+    --pulse-primary-bg: #20264a;
+
+    --pulse-success: #4ade80;
+    --pulse-success-bg: #10291d;
+    --pulse-success-border: #245a39;
+
+    --pulse-danger: #f87171;
+    --pulse-danger-dot: #ef4444;
+
+    --pulse-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.22);
+
+    --pulse-shadow-hover:
+            0 12px 28px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   GLOBAL THEME
+   ========================================================= */
+
+html,
+body {
+    background: var(--pulse-bg);
+    color: var(--pulse-text);
+}
+
+body {
+    transition:
+            background-color 180ms ease,
+            color 180ms ease;
+}
+
+
+/* =========================================================
+   PULSE SETTINGS PAGE
+   ========================================================= */
+
+.settings-header {
+    align-items: flex-end;
+}
+
+
+/* =========================================================
+   Profile
+   ========================================================= */
+
+.settings-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 20px;
+    padding: 22px 24px;
+
+    border: 1px solid var(--pulse-border);
+    border-radius: 16px;
+
+    background: var(--pulse-surface);
+
+    box-shadow: var(--pulse-shadow);
+
+    transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            box-shadow 180ms ease;
+}
+
+.settings-profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    flex: 0 0 52px;
+
+    border-radius: 14px;
+
+    background: var(--pulse-primary-soft);
+    color: var(--pulse-primary);
+}
+
+.settings-profile-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.settings-section-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--pulse-muted);
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.settings-profile-content h2 {
+    margin: 0;
+
+    color: var(--pulse-text);
+
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.settings-profile-content p {
+    margin: 5px 0 0;
+
+    color: var(--pulse-muted);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.settings-profile-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 7px 10px;
+
+    border: 1px solid var(--pulse-success-border);
+    border-radius: 8px;
+
+    background: var(--pulse-success-bg);
+    color: var(--pulse-success);
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Main Grid
+   ========================================================= */
+
+.settings-page-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   Cards
+   ========================================================= */
+
+.settings-section-card {
+    min-width: 0;
+
+    overflow: hidden;
+
+    border: 1px solid var(--pulse-border);
+    border-radius: 16px;
+
+    background: var(--pulse-surface);
+
+    box-shadow: var(--pulse-shadow);
+
+    transition:
+            transform 160ms ease,
+            box-shadow 160ms ease,
+            border-color 160ms ease,
+            background-color 180ms ease;
+}
+
+.settings-section-card:hover {
+    border-color: var(--pulse-border);
+
+    box-shadow: var(--pulse-shadow-hover);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   Card Header
+   ========================================================= */
+
+.settings-section-header {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 20px 20px 16px;
+
+    border-bottom: 1px solid var(--pulse-border-light);
+}
+
+.settings-section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    border-radius: 10px;
+
+    background: var(--pulse-primary-bg);
+    color: var(--pulse-primary);
+}
+
+.settings-section-header h2 {
+    margin: 0;
+
+    color: var(--pulse-text-strong);
+
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.settings-section-header p {
+    margin: 4px 0 0;
+
+    color: var(--pulse-muted-light);
+
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   Options
+   ========================================================= */
+
+.settings-option-list {
+    display: flex;
+    flex-direction: column;
+
+    padding: 0 20px;
+}
+
+.settings-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    min-height: 58px;
+
+    border-bottom: 1px solid var(--pulse-border-soft);
+}
+
+.settings-option:last-child {
+    border-bottom: none;
+}
+
+.settings-option-content {
+    min-width: 0;
+}
+
+.settings-option-content strong {
+    display: block;
+
+    color: var(--pulse-text-strong);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.settings-option-content span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--pulse-muted);
+
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.settings-value {
+    max-width: 48%;
+
+    color: var(--pulse-text-strong);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-align: right;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   Connection
+   ========================================================= */
+
+.settings-connection {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    flex-shrink: 0;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.settings-connection.online {
+    color: var(--pulse-success);
+}
+
+.settings-connection.offline {
+    color: var(--pulse-danger);
+}
+
+.settings-connection.checking {
+    color: var(--pulse-primary);
+}
+
+.settings-status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--pulse-danger-dot);
+}
+
+
+/* =========================================================
+   Toggle
+   ========================================================= */
+
+.settings-toggle {
+    position: relative;
+
+    width: 38px;
+    height: 21px;
+
+    flex: 0 0 38px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: #d9dee7;
+
+    cursor: pointer;
+
+    transition:
+            background-color 160ms ease;
+}
+
+html[data-theme="dark"] .settings-toggle {
+    background: #475569;
+}
+
+.settings-toggle span {
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 15px;
+    height: 15px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+            0 1px 3px rgba(15, 23, 42, 0.18);
+
+    transition:
+            transform 160ms ease;
+}
+
+.settings-toggle.active {
+    background: var(--pulse-primary);
+}
+
+.settings-toggle.active span {
+    transform: translateX(17px);
+}
+
+
+/* =========================================================
+   Theme Button
+   ========================================================= */
+
+.settings-theme-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 6px 2px;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--pulse-text);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            color 160ms ease,
+            opacity 160ms ease;
+}
+
+.settings-theme-button:hover {
+    color: var(--pulse-primary);
+}
+
+.settings-theme-button:focus-visible {
+    outline: 2px solid var(--pulse-primary);
+    outline-offset: 3px;
+    border-radius: 5px;
+}
+
+
+/* =========================================================
+   Bottom Information Banner
+   ========================================================= */
+
+.settings-info-banner {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+
+    padding: 14px 16px;
+
+    border: 1px solid var(--pulse-border);
+    border-radius: 12px;
+
+    background: var(--pulse-surface-alt);
+
+    transition:
+            background-color 180ms ease,
+            border-color 180ms ease;
+}
+
+.settings-info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    border-radius: 8px;
+
+    background: var(--pulse-primary-soft);
+    color: var(--pulse-primary);
+}
+
+.settings-info-banner strong {
+    display: block;
+
+    color: var(--pulse-text-strong);
+
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.settings-info-banner p {
+    margin: 3px 0 0;
+
+    color: var(--pulse-muted);
+
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   Animation
+   ========================================================= */
+
+.spin-animation {
+    animation:
+            settings-spin 1s linear infinite;
+}
+
+@keyframes settings-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .settings-page-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .settings-header {
+        align-items: stretch;
+
+        gap: 16px;
+    }
+
+    .settings-header .secondary-button {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+    .settings-profile-card {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+
+        padding: 18px;
+    }
+
+    .settings-profile-status {
+        margin-left: 68px;
+    }
+
+    .settings-section-header {
+        padding: 18px 16px 14px;
+    }
+
+    .settings-option-list {
+        padding: 0 16px;
+    }
+
+    .settings-option {
+        align-items: flex-start;
+
+        padding: 13px 0;
+    }
+
+    .settings-option-content {
+        flex: 1;
+    }
+
+    .settings-value {
+        max-width: 45%;
+    }
+
+    .settings-info-banner {
+        padding: 13px;
+    }
+}

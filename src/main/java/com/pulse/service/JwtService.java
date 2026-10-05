@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -19,9 +20,8 @@ public class JwtService {
      * Later we will move it to application configuration
      * and environment variables.
      */
-    private static final String SECRET_KEY =
-            "cHVsc2UtaHR0cHMtand0LXNlY3JldC1rZXktZm9yLWRldg==";
-
+    @Value("${pulse.security.jwt-secret}")
+    private String secretKey;
     /*
      * JWT lifetime:
      * 1 hour
@@ -32,7 +32,7 @@ public class JwtService {
     private SecretKey getSigningKey() {
 
         byte[] keyBytes =
-                Decoders.BASE64.decode(SECRET_KEY);
+                Decoders.BASE64.decode(secretKey);
 
         return Keys.hmacShaKeyFor(keyBytes);
     }
