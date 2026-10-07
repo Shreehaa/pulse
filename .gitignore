@@ -45,3 +45,6 @@ body.json
 job.json
 job-idempotency.json
 test-job.json
+
+# Generated job results
+data/job-results/
