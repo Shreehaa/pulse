@@ -8,26 +8,43 @@ import {
     User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { register } from "../services/authService";
 
 function SignupPage() {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] =
+        useState("");
 
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] =
+        useState(false);
     const [showConfirmPassword, setShowConfirmPassword] =
         useState(false);
 
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] =
+        useState<string | null>(null);
 
-    function handleSubmit(
+    const [loading, setLoading] =
+        useState(false);
+
+    async function handleSubmit(
         event: FormEvent<HTMLFormElement>,
     ) {
         event.preventDefault();
 
         setError(null);
+
+        const trimmedUsername =
+            username.trim();
+
+        if (trimmedUsername.length < 3) {
+            setError(
+                "Username must contain at least 3 characters.",
+            );
+            return;
+        }
 
         if (password.length < 8) {
             setError(
@@ -37,13 +54,39 @@ function SignupPage() {
         }
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+            setError(
+                "Passwords do not match.",
+            );
             return;
         }
 
-        setError(
-            "Account registration will be connected to the backend next.",
-        );
+        try {
+            setLoading(true);
+
+            await register(
+                trimmedUsername,
+                password,
+            );
+
+            navigate("/login", {
+                replace: true,
+                state: {
+                    message:
+                        "Account created successfully. Please sign in.",
+                },
+            });
+        } catch (registrationError: any) {
+            const message =
+                registrationError?.response?.data
+                    ?.message;
+
+            setError(
+                message ||
+                "Unable to create account. Please try again.",
+            );
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -73,8 +116,8 @@ function SignupPage() {
                     <h1>Create your account</h1>
 
                     <p>
-                        Create an account to manage and monitor
-                        your workflow operations.
+                        Create an account to manage and
+                        monitor your workflow operations.
                     </p>
                 </div>
 
@@ -138,7 +181,8 @@ function SignupPage() {
                                 className="login-password-toggle"
                                 onClick={() =>
                                     setShowPassword(
-                                        (current) => !current,
+                                        (current) =>
+                                            !current,
                                     )
                                 }
                                 aria-label={
@@ -187,7 +231,8 @@ function SignupPage() {
                                 className="login-password-toggle"
                                 onClick={() =>
                                     setShowConfirmPassword(
-                                        (current) => !current,
+                                        (current) =>
+                                            !current,
                                     )
                                 }
                                 aria-label={
@@ -218,12 +263,15 @@ function SignupPage() {
                         type="submit"
                         className="login-submit"
                         disabled={
+                            loading ||
                             !username.trim() ||
                             !password ||
                             !confirmPassword
                         }
                     >
-                        Create account
+                        {loading
+                            ? "Creating account..."
+                            : "Create account"}
                     </button>
                 </form>
 
@@ -236,11 +284,15 @@ function SignupPage() {
                 </div>
 
                 <div className="login-signup">
-                    <span>Already have an account?</span>
+                    <span>
+                        Already have an account?
+                    </span>
 
                     <button
                         type="button"
-                        onClick={() => navigate("/login")}
+                        onClick={() =>
+                            navigate("/login")
+                        }
                     >
                         Sign in
                         <ArrowLeft size={15} />

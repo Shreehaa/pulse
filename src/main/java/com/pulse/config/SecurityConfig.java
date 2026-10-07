@@ -64,6 +64,7 @@ public class SecurityConfig {
                                 "/api/health",
                                 "/actuator/**",
                                 "/api/auth/login",
+                                "/api/auth/register",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()

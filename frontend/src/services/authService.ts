@@ -4,6 +4,10 @@ interface LoginResponse {
     token: string;
 }
 
+interface RegisterResponse {
+    message: string;
+}
+
 const TOKEN_KEY = "pulse_token";
 
 export async function login(
@@ -22,6 +26,19 @@ export async function login(
     return response.data.token;
 }
 
+export async function register(
+    username: string,
+    password: string,
+): Promise<void> {
+    await api.post<RegisterResponse>(
+        "/api/auth/register",
+        {
+            username,
+            password,
+        },
+    );
+}
+
 export function saveToken(
     token: string,
 ): void {
@@ -32,11 +49,15 @@ export function saveToken(
 }
 
 export function getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(
+        TOKEN_KEY,
+    );
 }
 
 export function removeToken(): void {
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(
+        TOKEN_KEY,
+    );
 }
 
 export function isAuthenticated(): boolean {
