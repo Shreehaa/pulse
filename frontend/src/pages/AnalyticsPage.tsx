@@ -318,8 +318,6 @@ function AnalyticsPage() {
 
             {!error && (
                 <>
-                    {/* KPI CARDS */}
-
                     <section
                         className="analytics-stat-grid"
                         aria-label="Workflow metrics"
@@ -436,8 +434,6 @@ function AnalyticsPage() {
                         </div>
                     </section>
 
-                    {/* WORKFLOW HEALTH */}
-
                     <section className="analytics-health-card">
                         <div className="analytics-health-header">
                             <div>
@@ -497,8 +493,6 @@ function AnalyticsPage() {
                             </span>
                         </div>
                     </section>
-
-                    {/* CHARTS */}
 
                     <section className="analytics-chart-grid">
                         <div className="analytics-card">
@@ -561,6 +555,18 @@ function AnalyticsPage() {
                                                             <Cell
                                                                 key={
                                                                     entry.name
+                                                                }
+                                                                fill={
+                                                                    entry.name ===
+                                                                    "Completed"
+                                                                        ? "#22c55e"
+                                                                        : entry.name ===
+                                                                            "Failed"
+                                                                          ? "#ef4444"
+                                                                          : entry.name ===
+                                                                              "Processing"
+                                                                            ? "#6366f1"
+                                                                            : "#f59e0b"
                                                                 }
                                                             />
                                                         ),
@@ -702,8 +708,6 @@ function AnalyticsPage() {
                         </div>
                     </section>
 
-                    {/* PIPELINE */}
-
                     <section className="analytics-card analytics-pipeline-card">
                         <div className="analytics-card-header">
                             <div>
@@ -769,8 +773,6 @@ function AnalyticsPage() {
                             )}
                         </div>
                     </section>
-
-                    {/* BOTTOM SECTION */}
 
                     <section className="analytics-bottom-grid">
                         <div className="analytics-card analytics-recent-card">
@@ -939,3 +941,4 @@ function AnalyticsPage() {
 }
 
 export default AnalyticsPage;
+
