@@ -41,8 +41,15 @@
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    background: #111827;
-    color: #ffffff;
+    overflow: hidden;
+    background: #0f172a;
+}
+
+.login-brand-mark img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
 }
 
 .login-brand-text {
@@ -325,4 +332,22 @@
 
 .login-signup button:hover svg {
     transform: translateX(2px);
+}
+/* Browser autofill */
+
+.login-input-wrapper input:-webkit-autofill,
+.login-input-wrapper input:-webkit-autofill:hover,
+.login-input-wrapper input:-webkit-autofill:focus,
+.login-input-wrapper input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    caret-color: #111827;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Hide browser-native password reveal buttons */
+
+.login-input-wrapper input[type="password"]::-ms-reveal,
+.login-input-wrapper input[type="password"]::-ms-clear {
+    display: none;
 }

@@ -1,6 +1,5 @@
 import { type FormEvent, useState } from "react";
 import {
-    Activity,
     ArrowLeft,
     Eye,
     EyeOff,
@@ -19,8 +18,6 @@ function SignupPage() {
         useState("");
 
     const [showPassword, setShowPassword] =
-        useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] =
         useState(false);
 
     const [error, setError] =
@@ -95,10 +92,7 @@ function SignupPage() {
 
                 <div className="login-brand">
                     <div className="login-brand-mark">
-                        <Activity
-                            size={23}
-                            strokeWidth={2.5}
-                        />
+                        <img src="/favicon.svg" alt="Pulse" />
                     </div>
 
                     <div className="login-brand-text">
@@ -210,11 +204,7 @@ function SignupPage() {
 
                             <input
                                 id="signup-confirm-password"
-                                type={
-                                    showConfirmPassword
-                                        ? "text"
-                                        : "password"
-                                }
+                                type="password"
                                 value={confirmPassword}
                                 onChange={(event) =>
                                     setConfirmPassword(
@@ -225,28 +215,6 @@ function SignupPage() {
                                 autoComplete="new-password"
                                 required
                             />
-
-                            <button
-                                type="button"
-                                className="login-password-toggle"
-                                onClick={() =>
-                                    setShowConfirmPassword(
-                                        (current) =>
-                                            !current,
-                                    )
-                                }
-                                aria-label={
-                                    showConfirmPassword
-                                        ? "Hide password"
-                                        : "Show password"
-                                }
-                            >
-                                {showConfirmPassword ? (
-                                    <EyeOff size={18} />
-                                ) : (
-                                    <Eye size={18} />
-                                )}
-                            </button>
                         </div>
                     </div>
 

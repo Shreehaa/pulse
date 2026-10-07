@@ -1,6 +1,5 @@
 import { type FormEvent, useState } from "react";
 import {
-    Activity,
     ArrowRight,
     Eye,
     EyeOff,
@@ -58,10 +57,7 @@ function LoginPage() {
                 {/* Brand */}
                 <div className="login-brand">
                     <div className="login-brand-mark">
-                        <Activity
-                            size={23}
-                            strokeWidth={2.5}
-                        />
+                        <img src="/favicon.svg" alt="Pulse" />
                     </div>
 
                     <div className="login-brand-text">
