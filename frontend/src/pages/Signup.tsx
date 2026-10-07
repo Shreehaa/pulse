@@ -20,6 +20,9 @@ function SignupPage() {
     const [showPassword, setShowPassword] =
         useState(false);
 
+    const [showConfirmPassword, setShowConfirmPassword] =
+        useState(false);
+
     const [error, setError] =
         useState<string | null>(null);
 
@@ -92,7 +95,10 @@ function SignupPage() {
 
                 <div className="login-brand">
                     <div className="login-brand-mark">
-                        <img src="/favicon.svg" alt="Pulse" />
+                        <img
+                            src="/favicon.svg"
+                            alt="Pulse"
+                        />
                     </div>
 
                     <div className="login-brand-text">
@@ -204,7 +210,11 @@ function SignupPage() {
 
                             <input
                                 id="signup-confirm-password"
-                                type="password"
+                                type={
+                                    showConfirmPassword
+                                        ? "text"
+                                        : "password"
+                                }
                                 value={confirmPassword}
                                 onChange={(event) =>
                                     setConfirmPassword(
@@ -215,6 +225,28 @@ function SignupPage() {
                                 autoComplete="new-password"
                                 required
                             />
+
+                            <button
+                                type="button"
+                                className="login-password-toggle"
+                                onClick={() =>
+                                    setShowConfirmPassword(
+                                        (current) =>
+                                            !current,
+                                    )
+                                }
+                                aria-label={
+                                    showConfirmPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showConfirmPassword ? (
+                                    <EyeOff size={18} />
+                                ) : (
+                                    <Eye size={18} />
+                                )}
+                            </button>
                         </div>
                     </div>
 
