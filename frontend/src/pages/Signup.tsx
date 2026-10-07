@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from "react";
 import {
     Activity,
-    ArrowRight,
+    ArrowLeft,
     Eye,
     EyeOff,
     LockKeyhole,
@@ -9,53 +9,47 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import {
-    login,
-    saveToken,
-} from "../services/authService";
-
-function LoginPage() {
+function SignupPage() {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] =
+        useState(false);
+
     const [error, setError] = useState<string | null>(null);
 
-    async function handleSubmit(
+    function handleSubmit(
         event: FormEvent<HTMLFormElement>,
     ) {
         event.preventDefault();
 
-        if (loading) {
+        setError(null);
+
+        if (password.length < 8) {
+            setError(
+                "Password must contain at least 8 characters.",
+            );
             return;
         }
 
-        try {
-            setLoading(true);
-            setError(null);
-
-            const token = await login(username, password);
-
-            saveToken(token);
-
-            navigate("/dashboard", { replace: true });
-        } catch (error) {
-            console.error("Login failed:", error);
-
-            setError(
-                "Invalid username or password. Please try again.",
-            );
-        } finally {
-            setLoading(false);
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
         }
+
+        setError(
+            "Account registration will be connected to the backend next.",
+        );
     }
 
     return (
         <main className="login-page">
-            <section className="login-card">
-                {/* Brand */}
+            <section className="login-card signup-card">
+
                 <div className="login-brand">
                     <div className="login-brand-mark">
                         <Activity
@@ -75,35 +69,29 @@ function LoginPage() {
                     </div>
                 </div>
 
-                {/* Heading */}
                 <div className="login-heading">
-                    <h1>Welcome back</h1>
+                    <h1>Create your account</h1>
 
                     <p>
-                        Sign in to monitor and manage your
-                        workflow operations.
+                        Create an account to manage and monitor
+                        your workflow operations.
                     </p>
                 </div>
 
-                {/* Form */}
                 <form
                     className="login-form"
                     onSubmit={handleSubmit}
                 >
-                    {/* Username */}
                     <div className="login-field">
-                        <label htmlFor="username">
+                        <label htmlFor="signup-username">
                             Username
                         </label>
 
                         <div className="login-input-wrapper">
-                            <User
-                                size={18}
-                                strokeWidth={2}
-                            />
+                            <User size={18} />
 
                             <input
-                                id="username"
+                                id="signup-username"
                                 type="text"
                                 value={username}
                                 onChange={(event) =>
@@ -111,29 +99,24 @@ function LoginPage() {
                                         event.target.value,
                                     )
                                 }
-                                placeholder="Enter your username"
+                                placeholder="Choose a username"
                                 autoComplete="username"
                                 autoFocus
                                 required
-                                disabled={loading}
                             />
                         </div>
                     </div>
 
-                    {/* Password */}
                     <div className="login-field">
-                        <label htmlFor="password">
+                        <label htmlFor="signup-password">
                             Password
                         </label>
 
                         <div className="login-input-wrapper">
-                            <LockKeyhole
-                                size={18}
-                                strokeWidth={2}
-                            />
+                            <LockKeyhole size={18} />
 
                             <input
-                                id="password"
+                                id="signup-password"
                                 type={
                                     showPassword
                                         ? "text"
@@ -145,10 +128,9 @@ function LoginPage() {
                                         event.target.value,
                                     )
                                 }
-                                placeholder="Enter your password"
-                                autoComplete="current-password"
+                                placeholder="Create a password"
+                                autoComplete="new-password"
                                 required
-                                disabled={loading}
                             />
 
                             <button
@@ -164,7 +146,6 @@ function LoginPage() {
                                         ? "Hide password"
                                         : "Show password"
                                 }
-                                disabled={loading}
                             >
                                 {showPassword ? (
                                     <EyeOff size={18} />
@@ -175,70 +156,108 @@ function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Error */}
+                    <div className="login-field">
+                        <label htmlFor="signup-confirm-password">
+                            Confirm password
+                        </label>
+
+                        <div className="login-input-wrapper">
+                            <LockKeyhole size={18} />
+
+                            <input
+                                id="signup-confirm-password"
+                                type={
+                                    showConfirmPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                value={confirmPassword}
+                                onChange={(event) =>
+                                    setConfirmPassword(
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder="Confirm your password"
+                                autoComplete="new-password"
+                                required
+                            />
+
+                            <button
+                                type="button"
+                                className="login-password-toggle"
+                                onClick={() =>
+                                    setShowConfirmPassword(
+                                        (current) => !current,
+                                    )
+                                }
+                                aria-label={
+                                    showConfirmPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showConfirmPassword ? (
+                                    <EyeOff size={18} />
+                                ) : (
+                                    <Eye size={18} />
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
                     {error && (
                         <div
                             className="login-error"
                             role="alert"
                         >
-                            <span>{error}</span>
+                            {error}
                         </div>
                     )}
 
-                    {/* Submit */}
                     <button
                         type="submit"
                         className="login-submit"
                         disabled={
-                            loading ||
                             !username.trim() ||
-                            !password
+                            !password ||
+                            !confirmPassword
                         }
                     >
-                        {loading ? (
-                            <>
-                                <span className="login-spinner" />
-                                Signing in...
-                            </>
-                        ) : (
-                            <>
-                                Sign in
-                                <ArrowRight size={18} />
-                            </>
-                        )}
+                        Create account
                     </button>
                 </form>
 
-                {/* Security indicator */}
                 <div className="login-security">
                     <span className="login-security-dot" />
+
                     <span>
                         Secure authenticated session
                     </span>
                 </div>
 
                 <div className="login-signup">
-                    <span>Don't have an account?</span>
+                    <span>Already have an account?</span>
 
                     <button
                         type="button"
-                        onClick={() => navigate("/signup")}
+                        onClick={() => navigate("/login")}
                     >
-                        Create an account
-                        <ArrowRight size={15} />
+                        Sign in
+                        <ArrowLeft size={15} />
                     </button>
                 </div>
 
-                {/* Footer */}
                 <div className="login-footer">
                     <span>Pulse</span>
+
                     <span>
                         Distributed workflow operations
                     </span>
                 </div>
+
             </section>
         </main>
     );
 }
 
-export default LoginPage;
+export default SignupPage;

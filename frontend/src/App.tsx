@@ -16,6 +16,7 @@ import FailedJobsPage from "./pages/FailedJobsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/Signup";
 import AccountPage from "./pages/AccountPage";
 
 
@@ -80,6 +81,20 @@ function App() {
                             />
                         ) : (
                             <LoginPage />
+                        )
+                    }
+                />
+
+                <Route
+                    path="/signup"
+                    element={
+                        isAuthenticated() ? (
+                            <Navigate
+                                to="/dashboard"
+                                replace
+                            />
+                        ) : (
+                            <SignupPage />
                         )
                     }
                 />

@@ -13,12 +13,9 @@ export async function login(
     const response =
         await api.post<LoginResponse>(
             "/api/auth/login",
-            null,
             {
-                params: {
-                    username,
-                    password,
-                },
+                username,
+                password,
             },
         );
 
@@ -49,11 +46,6 @@ export function isAuthenticated(): boolean {
 export function logout(): void {
     removeToken();
 
-    /*
-     * Dispatch an application-level event so
-     * components can react to logout without
-     * directly depending on each other.
-     */
     window.dispatchEvent(
         new CustomEvent("pulse:logout"),
     );

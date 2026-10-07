@@ -12,12 +12,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.pulse.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,6 +30,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserRepository userRepository;
 
     @Value("${pulse.app.username}")
     private String appUsername;
@@ -36,8 +38,12 @@ public class SecurityConfig {
     @Value("${pulse.app.password}")
     private String appPassword;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            UserRepository userRepository) {
+
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -81,7 +87,8 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(
                 List.of(
-                        "http://localhost:3000"
+                        "http://localhost:3000",
+                        "https://pulse-frontend-mwbm.onrender.com"
                 )
         );
 
@@ -122,17 +129,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(
-            PasswordEncoder passwordEncoder
-    ) {
+    public UserDetailsService userDetailsService() {
 
-        UserDetails user = User.builder()
-                .username(appUsername)
-                .password(passwordEncoder.encode(appPassword))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
+        return username ->
+                userRepository.findByUsername(username)
+                        .map(user ->
+                                org.springframework.security.core.userdetails.User
+                                        .withUsername(user.getUsername())
+                                        .password(user.getPassword())
+                                        .roles(user.getRole())
+                                        .build()
+                        )
+                        .orElseThrow(() ->
+                                new UsernameNotFoundException(
+                                        "User not found"
+                                )
+                        );
     }
 
     @Bean

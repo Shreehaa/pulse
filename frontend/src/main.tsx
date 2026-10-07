@@ -11,6 +11,7 @@ import "./styles/job-details.css";
 import "./styles/analytics.css";
 import "./styles/settings.css";
 import "./styles/dashboard.css";
+import "./styles/login.css";
 
 createRoot(
     document.getElementById("root")!,
